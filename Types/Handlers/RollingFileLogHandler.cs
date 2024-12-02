@@ -5,7 +5,7 @@ using Novelog.Extensions;
 
 namespace Novelog.Types.Handlers;
 
-internal class RollingFileLogHandler : LogHandler, IDisposable
+internal sealed class RollingFileLogHandler : LogHandler, IDisposable
 {
     public override LogLevel MinLogLevel { get; }
     private readonly long _maxFileSize;
@@ -17,6 +17,8 @@ internal class RollingFileLogHandler : LogHandler, IDisposable
     
     private readonly ConcurrentQueue<string> _logQueue = new();
     private readonly CancellationTokenSource _cancellationTokenSource = new();
+    
+    private readonly int _flushInterval;
     private readonly Task _loggingTask;
     
     public RollingFileLogHandler(RollingFileConfig config)
@@ -24,6 +26,7 @@ internal class RollingFileLogHandler : LogHandler, IDisposable
         MinLogLevel = config.MinLogLevel;
         _maxFileSize = config.MaxFileSize;
         _maxFileCount = config.MaxFileCount;
+        _flushInterval = config.BufferFlushInterval;
         _filename = config.FilePath;
         _writer = CreateStreamWriter();
         
@@ -49,7 +52,7 @@ internal class RollingFileLogHandler : LogHandler, IDisposable
                     await RollFile();
                 }
             }
-            await Task.Delay(1000);
+            await Task.Delay(_flushInterval);
         }
     }
 

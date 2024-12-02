@@ -1,4 +1,5 @@
 ﻿using Novelog.Abstractions;
+using Novelog.Formatters;
 using Novelog.Types;
 using Novelog.Types.Handlers;
 
@@ -22,28 +23,44 @@ public class LoggerConfigBuilder
     }
     
     /// <summary>
-    /// Sets the date time format for the logger.
+    /// Sets the formatter of the logger.
     /// </summary>
-    /// <param name="format">The format of the date time.</param>
-    public LoggerConfigBuilder SetDateTimeFormat(string format)
+    /// <param name="formatter">The formatter to use.</param>
+    public LoggerConfigBuilder SetMessageFormatter(IFormatter formatter)
     {
-        _logger.DateFormat = format;
+        _logger.Formatter = formatter;
         return this;
     }
     
     /// <summary>
-    /// Sets the format of the log message.<br/>
-    /// Here is the list of supported inputs:<br/>
+    /// Modifies the default formatter of the logger.
+    /// You don't have to set both parameters just leave one empty if desired.
+    /// <b>If you set custom formatter don't use this method!</b><br/>
+    /// Here is the list of supported inputs for message format:<br/>
     /// {0} - Timestamp<br/>
     /// {1} - Caller (Method name by default)<br/>
     /// {2} - At what line was the log called<br/>
     /// {3} - Log level<br/>
     /// {4} - Message<br/>
     /// </summary>
-    /// <param name="format">The format of the log message.</param>
-    public LoggerConfigBuilder SetLogMessageFormat(string format)
+    /// <param name="dateFormat">The date format to use. <i>(Default: [{0}] [{1}:{2} | {3}] {4})</i></param>
+    /// <param name="messageFormat">The message format to use. <i>(Default: yyyy-MM-dd HH:mm:ss)</i></param>
+    public LoggerConfigBuilder ModifyDefaultFormatter(string dateFormat, string messageFormat)
     {
-        _logger.LogMessageFormat = format;
+        var isDateFormatEmpty = string.IsNullOrWhiteSpace(dateFormat);
+        var isMessageFormatEmpty = string.IsNullOrWhiteSpace(messageFormat);
+
+        _logger.Formatter = isDateFormatEmpty switch
+        {
+            false when !isMessageFormatEmpty => new DefaultFormatter
+            {
+                DateFormat = dateFormat, MessageFormat = messageFormat
+            },
+            true when !isMessageFormatEmpty => new DefaultFormatter { MessageFormat = messageFormat },
+            false when isMessageFormatEmpty => new DefaultFormatter { DateFormat = dateFormat },
+            _ => _logger.Formatter
+        };
+
         return this;
     }
     

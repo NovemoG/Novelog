@@ -1,8 +1,9 @@
 ﻿using Novelog.Abstractions;
+using Novelog.Formatters;
 
 namespace Novelog.Types.Handlers;
 
-internal class ConsoleLogHandler : LogHandler
+internal sealed class ConsoleLogHandler : LogHandler
 {
     public override LogLevel MinLogLevel { get; }
     
