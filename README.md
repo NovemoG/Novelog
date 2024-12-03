@@ -1,7 +1,7 @@
 # Novelog
 
 Novelog is a simple and flexible logging library for .NET applications.
-It supports multiple log handlers, message enrichment, and filtering.
+It supports multiple log handlers, message enrichment, and formatting.
 
 ## Features
 
@@ -22,6 +22,7 @@ dotnet add package Novelog
 ### Basic Configuration
 
 To use the logger, you need to configure it first. You can configure the logger using Dependency Injection (DI) or manually.
+The shared logger instance will be set up automatically when using either method.
 
 #### Using Dependency Injection
 
@@ -38,7 +39,6 @@ public class Startup
         services.AddLogger(config =>
         {
             config.AttachConsole();
-            config.SetupShared();
         });
     }
 }
@@ -76,8 +76,6 @@ using Novelog.Config;
 var logger = new LoggerConfigBuilder()
     .AttachConsole()
     .Build();
-
-SharedLogger.Configure(logger);
 ```
 
 2. Use the shared logger:
@@ -89,7 +87,7 @@ public class MyClass
 {
     public void DoSomething()
     {
-        SharedLogger.Logger.LogInfo("This is an info message.");
+        Logger.Shared.LogInfo("This is an info message.");
     }
 }
 ```
@@ -112,8 +110,6 @@ var rollingFileConfig = new RollingFileConfig
 var logger = new LoggerConfigBuilder()
     .AttachRollingFile(rollingFileConfig)
     .Build();
-
-SharedLogger.Configure(logger);
 ```
 
 ## License
@@ -123,5 +119,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
-
----
