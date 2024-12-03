@@ -7,6 +7,8 @@ namespace Novelog.Types.Handlers;
 
 internal sealed class RollingFileLogHandler : LogHandler, IDisposable
 {
+    private bool _disposed = false;
+    
     public override LogLevel MinLogLevel { get; }
     private readonly long _maxFileSize;
     private readonly int _maxFileCount;
@@ -80,9 +82,13 @@ internal sealed class RollingFileLogHandler : LogHandler, IDisposable
 
     public void Dispose()
     {
+        if (_disposed) return;
+        
         _cancellationTokenSource.Cancel();
         _loggingTask.Wait();
         _writer.Dispose();
         _cancellationTokenSource.Dispose();
+        
+        _disposed = true;
     }
 }

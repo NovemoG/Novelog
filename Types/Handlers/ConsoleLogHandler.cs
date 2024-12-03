@@ -17,7 +17,12 @@ internal sealed class ConsoleLogHandler : LogHandler
         switch (level)
         {
             case LogLevel.DEBUG:
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
             case LogLevel.INFO:
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(message);
                 break;
             case LogLevel.WARN:

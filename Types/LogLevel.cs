@@ -1,21 +1,32 @@
-﻿using System.ComponentModel;
+﻿namespace Novelog.Types;
 
-namespace Novelog.Types;
-
+/// <summary>
+/// Represents the severity level of the log.
+/// </summary>
 public enum LogLevel : byte
 {
-    [Description("Information that is useful for debugging")]
+    /// <summary>
+    /// Information that is useful for debugging
+    /// </summary>
     DEBUG,
     
-    [Description("Information that is useful for monitoring")]
+    /// <summary>
+    /// Information that is useful for monitoring
+    /// </summary>
     INFO,
     
-    [Description("When something unexpected happened")]
+    /// <summary>
+    /// When something unexpected happened
+    /// </summary>
     WARN,
     
-    [Description("When server did not crash but stopped something from executing properly")]
+    /// <summary>
+    /// When server did not crash but stopped something from executing properly
+    /// </summary>
     ERROR,
     
-    [Description("When server crashed")]
+    /// <summary>
+    /// When application crashes
+    /// </summary>
     CRIT,
 }

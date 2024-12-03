@@ -15,7 +15,7 @@ public abstract class LogHandler
     /// <summary>
     /// Log message handler.
     /// </summary>
-    /// <param name="level">Log level</param>
-    /// <param name="message">Formatted log message</param>
+    /// <param name="level">Log level.</param>
+    /// <param name="message">Formatted log message.</param>
     public abstract void Log(LogLevel level, string message);
 }

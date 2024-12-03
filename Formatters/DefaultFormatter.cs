@@ -16,7 +16,7 @@ internal sealed class DefaultFormatter : IFormatter
         string caller = "",
         int atLine = 0)
     {
-        message = string.Format(MessageFormat, Timestamp, level, caller, atLine, message);
+        message = string.Format(MessageFormat, Timestamp, caller, atLine, level, message);
     }
 
     public void Format<T0>(
