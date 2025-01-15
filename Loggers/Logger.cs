@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
 using Novelog.Abstractions;
 using Novelog.Config;
 using Novelog.Formatters;
@@ -38,12 +37,14 @@ public sealed class Logger : ILogger
         }
     }
     
-    internal Logger() { }
-    
     #endregion
+    
+    internal Logger() { }
     
     internal List<LogHandler> LogHandlers { get; } = [];
     internal IFormatter Formatter { get; set; } = new DefaultFormatter();
+    
+    private bool _disposed;
 
     #region Log Handlers
     
@@ -86,70 +87,45 @@ public sealed class Logger : ILogger
 
     #endregion
     
-    #region No parameters implementation 
-    
-    /// <summary>
-    /// Logs a debug message to all attached log handlers.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="caller">The method or any other identifier that called the log.</param>
-    /// <param name="atLine">The line at which the log was called.</param>
+    #region No parameters implementation
+
+    /// <inheritdoc />
     public void LogDebug(string message,
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int atLine = 0)
     {
         Log(LogLevel.DEBUG, message, caller, atLine);
     }
-    
-    /// <summary>
-    /// Logs an info message to all attached log handlers.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="caller">The method or any other identifier that called the log.</param>
-    /// <param name="atLine">The line at which the log was called.</param>
+
+
+    /// <inheritdoc />
     public void LogInfo(string message,
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int atLine = 0)
     {
         Log(LogLevel.INFO, message, caller, atLine);
     }
-    
-    /// <summary>
-    /// Logs a warning message to all attached log handlers.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="ex">The exception to log.</param>
-    /// <param name="caller">The method or any other identifier that called the log.</param>
-    /// <param name="atLine">The line at which the log was called.</param>
+
+
+    /// <inheritdoc />
     public void LogWarning(string message, Exception? ex = null,
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int atLine = 0)
     {
         LogWithException(LogLevel.WARN, message, ex, caller, atLine);
     }
-    
-    /// <summary>
-    /// Logs an error message with an exception and stacktrace to all attached log handlers.
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="ex">The exception to log.</param>
-    /// <param name="caller">The method or any other identifier that called the log.</param>
-    /// <param name="atLine">The line at which the log was called.</param>
+
+
+    /// <inheritdoc />
     public void LogError(string message, Exception? ex,
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int atLine = 0)
     {
         LogWithException(LogLevel.ERROR, message, ex, caller, atLine);
     }
-    
-    /// <summary>
-    /// Logs a critical error message to all attached log handlers.
-    /// (Should be used for fatal errors that stop the application)
-    /// </summary>
-    /// <param name="message">The message to log.</param>
-    /// <param name="ex">The exception to log.</param>
-    /// <param name="caller">The method or any other identifier that called the log.</param>
-    /// <param name="atLine">The line at which the log was called.</param>
+
+
+    /// <inheritdoc />
     public void LogCritical(string message, Exception? ex,
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int atLine = 0)
@@ -158,28 +134,20 @@ public sealed class Logger : ILogger
     }
 
     #endregion
-}
 
-#region DI Implementation
-
-// ReSharper disable once InconsistentNaming
-/// <summary>
-/// Contains extension method for the <see cref="IServiceCollection"/> to add the logger to the DI.
-/// </summary>
-public static class LoggerDI
-{
-    /// <summary>
-    /// Adds the logger to the DI with the specified configuration.
-    /// </summary>
-    /// <param name="services">The service collection to add the logger to.</param>
-    /// <param name="options">The configuration options for the logger.</param>
-    public static void AddLogger(this IServiceCollection services, Action<LoggerConfigBuilder> options)
+    /// <inheritdoc />
+    public void Dispose()
     {
-        var configBuilder = new LoggerConfigBuilder();
-        options(configBuilder);
+        if (_disposed) return;
         
-        services.AddSingleton<ILogger>(configBuilder.Build());
+        foreach (var handler in LogHandlers)
+        {
+            if (handler is IDisposable disposableHandler)
+            {
+                disposableHandler.Dispose();
+            }
+        }
+
+        _disposed = true;
     }
 }
-
-#endregion

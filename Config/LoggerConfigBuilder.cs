@@ -1,7 +1,7 @@
 ﻿using Novelog.Abstractions;
 using Novelog.Formatters;
-using Novelog.Types;
 using Novelog.Types.Handlers;
+using LogLevel = Novelog.Types.LogLevel;
 
 namespace Novelog.Config;
 
@@ -11,6 +11,7 @@ namespace Novelog.Config;
 public sealed class LoggerConfigBuilder
 {
     private readonly Logger _logger = new();
+    private readonly Dictionary<Type, LoggerConfigBuilder> _typedConfigs = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoggerConfigBuilder"/> class.
@@ -20,6 +21,8 @@ public sealed class LoggerConfigBuilder
     {
         Logger.Shared = _logger;
     }
+    
+    private LoggerConfigBuilder(bool setShared) { }
     
     /// <summary>
     /// Sets the formatter of the logger.
@@ -42,8 +45,8 @@ public sealed class LoggerConfigBuilder
     /// {3} - Log level<br/>
     /// {4} - Message
     /// </summary>
-    /// <param name="dateFormat">The date format to use. <i>(Default: [{0}] [{1}:{2} | {3}] {4})</i></param>
-    /// <param name="messageFormat">The message format to use. <i>(Default: yyyy-MM-dd HH:mm:ss)</i></param>
+    /// <param name="dateFormat">The date format to use. <i>(Default: yyyy-MM-dd HH:mm:ss)</i></param>
+    /// <param name="messageFormat">The message format to use. <i>(Default: [{0}] [{1}:{2} | {3}] {4})</i></param>
     public LoggerConfigBuilder ModifyDefaultFormatter(string dateFormat, string messageFormat)
     {
         var isDateFormatEmpty = string.IsNullOrWhiteSpace(dateFormat);
@@ -99,11 +102,44 @@ public sealed class LoggerConfigBuilder
     }
 
     /// <summary>
+    /// Allows configuring a separate logger for type <typeparamref name="T"/>.
+    /// </summary>
+    public LoggerConfigBuilder ForType<T>(Action<LoggerConfigBuilder> options)
+    {
+        var typeBuilder = new LoggerConfigBuilder(false);
+        options(typeBuilder);
+        
+        _typedConfigs[typeof(T)] = typeBuilder;
+
+        return this;
+    }
+
+    /// <summary>
     /// Finalizes the logger configuration and builds the logger.
     /// </summary>
     /// <returns>The built logger.</returns>
     public Logger Build()
     {
         return _logger;
+    }
+
+    /// <summary>
+    /// Builds the default logger and any typed logger configurations.
+    /// </summary>
+    /// <returns>
+    /// A default logger and a dictionary mapping each
+    /// configured type to its own Logger.
+    /// </returns>
+    public (Logger DefaultLogger, Dictionary<Type, Logger> Loggers) BuildAll()
+    {
+        var defaultLogger = _logger;
+        var typedLoggers = new Dictionary<Type, Logger>();
+
+        foreach (var (type, subBuilder) in _typedConfigs)
+        {
+            typedLoggers[type] = subBuilder._logger;
+        }
+        
+        return (defaultLogger, typedLoggers);
     }
 }
