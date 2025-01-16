@@ -17,12 +17,11 @@ public sealed class LoggerConfigBuilder
     /// Initializes a new instance of the <see cref="LoggerConfigBuilder"/> class.
     /// After this constructor is called, the shared logger will be set to the logger being built.
     /// </summary>
-    public LoggerConfigBuilder()
+    public LoggerConfigBuilder(bool setShared = true)
     {
+        if (!setShared) return;
         Logger.Shared = _logger;
     }
-    
-    private LoggerConfigBuilder(bool setShared) { }
     
     /// <summary>
     /// Sets the formatter of the logger.
