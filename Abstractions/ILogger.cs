@@ -79,6 +79,7 @@ public interface ILogger<T> : IDisposable
     /// Logs a debug message to all attached log handlers.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    /// <param name="caller">The class or any other identifier that called the log.</param>
     /// <param name="atLine">The line at which the log was called.</param>
     void LogDebug(
         string message,
@@ -89,6 +90,7 @@ public interface ILogger<T> : IDisposable
     /// Logs an info message to all attached log handlers.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    /// <param name="caller">The class or any other identifier that called the log.</param>
     /// <param name="atLine">The line at which the log was called.</param>
     void LogInfo(
         string message,
@@ -100,6 +102,7 @@ public interface ILogger<T> : IDisposable
     /// </summary>
     /// <param name="message">The message to log.</param>
     /// <param name="ex">The exception to log.</param>
+    /// <param name="caller">The class or any other identifier that called the log.</param>
     /// <param name="atLine">The line at which the log was called.</param>
     void LogWarning(
         string message,
@@ -112,6 +115,7 @@ public interface ILogger<T> : IDisposable
     /// </summary>
     /// <param name="message">The message to log.</param>
     /// <param name="ex">The exception to log.</param>
+    /// <param name="caller">The class or any other identifier that called the log.</param>
     /// <param name="atLine">The line at which the log was called.</param>
     void LogError(
         string message,
@@ -125,6 +129,7 @@ public interface ILogger<T> : IDisposable
     /// </summary>
     /// <param name="message">The message to log.</param>
     /// <param name="ex">The exception to log.</param>
+    /// <param name="caller">The class or any other identifier that called the log.</param>
     /// <param name="atLine">The line at which the log was called.</param>
     void LogCritical(
         string message,

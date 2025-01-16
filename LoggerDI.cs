@@ -4,6 +4,9 @@ using ILogger = Novelog.Abstractions.ILogger;
 
 namespace Novelog;
 
+/// <summary>
+/// Contains extension methods for adding the logger to the DI.
+/// </summary>
 public static class LoggerDI
 {
     /// <summary>
