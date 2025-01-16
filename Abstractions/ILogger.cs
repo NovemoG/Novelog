@@ -82,6 +82,7 @@ public interface ILogger<T> : IDisposable
     /// <param name="atLine">The line at which the log was called.</param>
     void LogDebug(
         string message,
+        string caller = "",
         [CallerLineNumber] int atLine = 0);
     
     /// <summary>
@@ -91,6 +92,7 @@ public interface ILogger<T> : IDisposable
     /// <param name="atLine">The line at which the log was called.</param>
     void LogInfo(
         string message,
+        string caller = "",
         [CallerLineNumber] int atLine = 0);
 
     /// <summary>
@@ -102,6 +104,7 @@ public interface ILogger<T> : IDisposable
     void LogWarning(
         string message,
         Exception? ex = null,
+        string caller = "",
         [CallerLineNumber] int atLine = 0);
     
     /// <summary>
@@ -113,6 +116,7 @@ public interface ILogger<T> : IDisposable
     void LogError(
         string message,
         Exception? ex,
+        string caller = "",
         [CallerLineNumber] int atLine = 0);
     
     /// <summary>
@@ -125,5 +129,6 @@ public interface ILogger<T> : IDisposable
     void LogCritical(
         string message,
         Exception? ex,
+        string caller = "",
         [CallerLineNumber] int atLine = 0);
 }

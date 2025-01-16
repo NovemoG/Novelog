@@ -1,4 +1,5 @@
-﻿using Novelog.Abstractions;
+﻿using System.Runtime.CompilerServices;
+using Novelog.Abstractions;
 // ReSharper disable ExplicitCallerInfoArgument
 
 namespace Novelog;
@@ -25,24 +26,47 @@ public sealed class TypedLogger<T> : ILogger<T>
     }
 
     /// <inheritdoc />
-    public void LogDebug(string message, int atLine = 0)
-        => _baseLogger.LogDebug(message, typeof(T).Name, atLine);
+    public void LogDebug(string message,
+        string caller = "",
+        [CallerLineNumber] int atLine = 0)
+    {
+        _baseLogger.LogDebug(message, GetCaller(caller), atLine);
+    }
 
     /// <inheritdoc />
-    public void LogInfo(string message, int atLine = 0)
-        => _baseLogger.LogInfo(message, typeof(T).Name, atLine);
+    public void LogInfo(string message,
+        string caller = "",
+        [CallerLineNumber] int atLine = 0)
+    {
+        _baseLogger.LogInfo(message, GetCaller(caller), atLine);
+    }
 
     /// <inheritdoc />
-    public void LogWarning(string message, Exception? ex = null, int atLine = 0)
-        => _baseLogger.LogWarning(message, ex, typeof(T).Name, atLine);
+    public void LogWarning(string message,Exception? ex = null,
+        string caller = "",
+        [CallerLineNumber] int atLine = 0)
+    {
+        _baseLogger.LogWarning(message, ex, GetCaller(caller), atLine);
+    }
 
     /// <inheritdoc />
-    public void LogError(string message, Exception? ex, int atLine = 0)
-        => _baseLogger.LogError(message, ex, typeof(T).Name, atLine);
+    public void LogError(string message, Exception? ex,
+        string caller = "",
+        [CallerLineNumber] int atLine = 0)
+    {
+        _baseLogger.LogError(message, ex, GetCaller(caller), atLine);
+    }
 
     /// <inheritdoc />
-    public void LogCritical(string message, Exception? ex, int atLine = 0)
-        => _baseLogger.LogCritical(message, ex, typeof(T).Name, atLine);
+    public void LogCritical(string message, Exception? ex,
+        string caller = "",
+        [CallerLineNumber] int atLine = 0)
+    {
+        _baseLogger.LogCritical(message, ex, GetCaller(caller), atLine);
+    }
+    
+    private static string GetCaller(string caller)
+        => string.IsNullOrEmpty(caller) ? typeof(T).Name : caller;
     
     /// <inheritdoc />
     public void Dispose()
