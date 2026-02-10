@@ -9,7 +9,7 @@ namespace Novelog;
 /// It is a type-specific logger that can be configured differently than the default logger.
 /// <i>It can be only used in DI.</i>
 /// </summary>
-public sealed class TypedLogger<T> : ILogger<T>
+public class TypedLogger<T> : ILogger<T>
 {
     private readonly Logger _baseLogger;
 

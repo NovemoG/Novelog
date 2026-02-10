@@ -4,14 +4,14 @@ namespace Novelog;
 
 /// <summary>
 /// A logger for Novelog using Microsoft.Extensions.Logging.
-/// You may want to use separate configBuilder for this, since atLine does not work.
+/// You may want to use a separate configBuilder for this, since atLine does not work.
 /// </summary>
 /// <param name="baseLogger">The base logger to use.</param>
 /// <param name="categoryName">The category name of the logger.</param>
 public class NovelogLogger(Logger baseLogger, string categoryName) : ILogger
 {
     /// <inheritdoc />
-    public IDisposable BeginScope<TState>(TState state) => new LoggerScope<TState>(state);
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull => new LoggerScope<TState>(state);
 
     /// <inheritdoc />
     public bool IsEnabled(LogLevel logLevel) => true;
